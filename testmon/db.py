@@ -196,14 +196,28 @@ class DB(object):
         return result
 
     def delete_nodes(self, nodeids):
+        a = time.time()
+        chunk_size = 1000
+        nodeids = list(nodeids)
         self.con.executemany(
             """
             DELETE
             FROM node
             WHERE environment = ?
-              AND name = ?""",
-            [(self.env, nodeid) for nodeid in nodeids],
+              AND name in (?)""",
+            [(self.env, ",".join(str(x)
+              for x in nodeids[i:i + chunk_size]))
+              for i in range(0, len(nodeids), chunk_size)],
         )
+        # self.con.executemany(
+        #     """
+        #     DELETE
+        #     FROM node
+        #     WHERE environment = ?
+        #       AND name = ?""",
+        #     [(self.env, nodeid) for nodeid in nodeids],
+        # )
+        print(f"deleted nodes... {len(nodeids)} - {time.time() - a} s.")
 
     def all_nodes(self):
         return {
