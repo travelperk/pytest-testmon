@@ -196,19 +196,26 @@ class DB(object):
         return result
 
     def delete_nodes(self, nodeids):
+        return
+        import time
         a = time.time()
         chunk_size = 1000
         nodeids = list(nodeids)
-        self.con.executemany(
-            """
-            DELETE
-            FROM node
-            WHERE environment = ?
-              AND name in (?)""",
-            [(self.env, ",".join(str(x)
-              for x in nodeids[i:i + chunk_size]))
-              for i in range(0, len(nodeids), chunk_size)],
-        )
+        chunks = [
+            (self.env, ",".join(f"'{x}'"
+                for x in nodeids[i:i + chunk_size]))
+                for i in range(0, len(nodeids), chunk_size)
+        ]
+        for idx, chunk in enumerate(chunks):
+            self.con.execute(
+                f"""
+                DELETE
+                FROM node
+                WHERE environment = ?
+                  AND name in ({chunk[1]})""",
+                (chunk[0], )
+            )
+            print(f"deleted node {idx}... {len(nodeids)} - {time.time() - a} s.")
         # self.con.executemany(
         #     """
         #     DELETE
