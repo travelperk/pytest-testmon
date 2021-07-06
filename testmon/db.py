@@ -72,11 +72,11 @@ class DB(object):
             cursor = con.cursor()
             cursor.execute(
                 """ 
-                INSERT OR REPLACE INTO node 
-                (environment, name, result, failed) 
-                VALUES (?, ?, ?, ?)
+                INSERT OR REPLACE INTO node
+                (environment, name, failed) 
+                VALUES (?, ?, ?)
                 """,
-                (self.env, nodeid, json.dumps(result), failed),
+                (self.env, nodeid, failed),
             )
             node_id = cursor.lastrowid
 
@@ -228,9 +228,9 @@ class DB(object):
 
     def all_nodes(self):
         return {
-            row[0]: json.loads(row[1])
+            row[0]: {}
             for row in self.con.execute(
-                """  SELECT name, result
+                """  SELECT name
                                     FROM node 
                                     WHERE environment = ?
                                    """,
