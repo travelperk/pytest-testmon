@@ -267,7 +267,9 @@ class TestmonCollect(object):
         self.reports[report.nodeid][report.when] = serialize_report(report)
 
     def pytest_sessionfinish(self, session):
+
         self.testmon_data.db.remove_unused_fingerprints()
+        self.testmon_data.db.delete_failed_nodes()
         self.testmon.close()
 
 

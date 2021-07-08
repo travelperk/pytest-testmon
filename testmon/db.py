@@ -238,6 +238,10 @@ class DB(object):
             )
         }
 
+    def delete_failed_nodes(self):
+        with self.con as con:
+            con.execute("DELETE FROM Node WHERE failed is true")
+
     def filenames_fingerprints(self):
         return self.con.execute(
             """
