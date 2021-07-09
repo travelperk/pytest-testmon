@@ -169,8 +169,8 @@ class TestmonData(object):
         self.connection = sqlite3.connect(self.datafile)
         self.connection.execute("PRAGMA foreign_keys = TRUE ")
         self.connection.execute("PRAGMA recursive_triggers = TRUE ")
-        self.connection.execute("PRAGMA journal_mode = MEMORY")
-        self.connection.execute("PRAGMA synchronous = OFF")
+        # self.connection.execute("PRAGMA journal_mode = MEMORY")
+        # self.connection.execute("PRAGMA synchronous = OFF")
         self.connection.row_factory = sqlite3.Row
 
         self.db = DB(self.connection, self.environment)
